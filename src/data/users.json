@@ -1,0 +1,40 @@
+[
+  {
+    "id": "vedansh",
+    "name": "Vedansh Maurya",
+    "email": "vedansh@galgotiasuniversity.edu.in",
+    "password": "password123",
+    "role": "student",
+    "walletBalance": 850,
+    "isEmailVerified": true,
+    "createdAt": "2026-10-01T00:00:00.000Z"
+  },
+  {
+    "id": "student101",
+    "name": "Rahul Sharma",
+    "email": "student101@campus.edu.in",
+    "password": "student123",
+    "role": "student",
+    "walletBalance": 420,
+    "isEmailVerified": true,
+    "createdAt": "2026-10-05T00:00:00.000Z"
+  },
+  {
+    "id": "cafe1",
+    "name": "Main Cafeteria Counter",
+    "email": "cafeteria@campus.edu.in",
+    "password": "cafe123",
+    "role": "cafe",
+    "isEmailVerified": true,
+    "createdAt": "2026-10-01T00:00:00.000Z"
+  },
+  {
+    "id": "admin",
+    "name": "Kitchen Admin",
+    "email": "admin@campus.edu.in",
+    "password": "admin123",
+    "role": "cafe",
+    "isEmailVerified": true,
+    "createdAt": "2026-10-01T00:00:00.000Z"
+  }
+]

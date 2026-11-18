@@ -1,0 +1,26 @@
+[
+  {
+    "id": "vedansh",
+    "name": "Vedansh Maurya",
+    "password": "password123",
+    "role": "student"
+  },
+  {
+    "id": "student101",
+    "name": "Rahul Sharma",
+    "password": "student123",
+    "role": "student"
+  },
+  {
+    "id": "cafe1",
+    "name": "Main Cafeteria Counter",
+    "password": "cafe123",
+    "role": "cafe"
+  },
+  {
+    "id": "admin",
+    "name": "Kitchen Admin",
+    "password": "admin123",
+    "role": "cafe"
+  }
+]

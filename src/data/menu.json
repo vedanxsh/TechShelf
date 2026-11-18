@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "name": "Veg Crispy Burger",
+    "desc": "Crispy herb potato patty, molten cheese & fresh veggies",
+    "price": 60,
+    "category": "fastfood",
+    "isVeg": true,
+    "prepTime": "5-7 mins",
+    "icon": "🍔",
+    "rating": 4.8,
+    "available": true
+  },
+  {
+    "id": 2,
+    "name": "Chicken Shawarma Roll",
+    "desc": "Spiced tandoori chicken, garlic mayo & pickled onions",
+    "price": 70,
+    "category": "fastfood",
+    "isVeg": false,
+    "prepTime": "6-8 mins",
+    "icon": "🌯",
+    "rating": 4.9,
+    "available": true
+  },
+  {
+    "id": 3,
+    "name": "Special Masala Maggi",
+    "desc": "Steaming noodles tossed with secret spices, butter & veggies",
+    "price": 45,
+    "category": "snacks",
+    "isVeg": true,
+    "prepTime": "4-5 mins",
+    "icon": "🍜",
+    "rating": 4.7,
+    "available": true
+  },
+  {
+    "id": 4,
+    "name": "Grilled Paneer Wrap",
+    "desc": "Marinated paneer cubes, mint chutney & crunchy peppers",
+    "price": 65,
+    "category": "fastfood",
+    "isVeg": true,
+    "prepTime": "6-8 mins",
+    "icon": "🥙",
+    "rating": 4.8,
+    "available": true
+  },
+  {
+    "id": 5,
+    "name": "Peri-Peri French Fries",
+    "desc": "Golden fried potato wedges dusted with spicy peri-peri rub",
+    "price": 40,
+    "category": "snacks",
+    "isVeg": true,
+    "prepTime": "3-5 mins",
+    "icon": "🍟",
+    "rating": 4.6,
+    "available": true
+  },
+  {
+    "id": 6,
+    "name": "Iced Cold Coffee",
+    "desc": "Chilled blended espresso with rich chocolate froth",
+    "price": 35,
+    "category": "beverages",
+    "isVeg": true,
+    "prepTime": "2-3 mins",
+    "icon": "🥤",
+    "rating": 4.9,
+    "available": true
+  },
+  {
+    "id": 7,
+    "name": "Executive Veg Thali",
+    "desc": "Paneer butter masala, yellow dal, jeera rice, 2 rotis & salad",
+    "price": 120,
+    "category": "meals",
+    "isVeg": true,
+    "prepTime": "8-10 mins",
+    "icon": "🍛",
+    "rating": 4.9,
+    "available": true
+  },
+  {
+    "id": 8,
+    "name": "Chicken Biryani Box",
+    "desc": "Aromatic dum basmati rice, tender spiced chicken & raita",
+    "price": 130,
+    "category": "meals",
+    "isVeg": false,
+    "prepTime": "6-8 mins",
+    "icon": "🍗",
+    "rating": 4.9,
+    "available": true
+  },
+  {
+    "id": 9,
+    "name": "Delhi Samosa Chaat",
+    "desc": "Crushed golden samosas with spicy chana masala & sweet curd",
+    "price": 50,
+    "category": "snacks",
+    "isVeg": true,
+    "prepTime": "3-4 mins",
+    "icon": "🥟",
+    "rating": 4.7,
+    "available": true
+  },
+  {
+    "id": 10,
+    "name": "Fresh Lime Mint Soda",
+    "desc": "Fizzy club soda with crushed mint, fresh lemon & rock salt",
+    "price": 30,
+    "category": "beverages",
+    "isVeg": true,
+    "prepTime": "2 mins",
+    "icon": "🍹",
+    "rating": 4.6,
+    "available": true
+  }
+]

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickBite — Modern Campus Cafeteria Pre-Order & KDS</title>
+  
+  <!-- Preconnect Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Modular Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/views.css">
+  <link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="container nav-content">
+      <a href="#" class="brand" onclick="window.location.reload()">
+        <div class="brand-icon">⚡</div>
+        <div>
+          <div class="brand-title">QuickBite</div>
+          <div class="brand-sub">
+            <span class="pulse-dot"></span>
+            <span id="networkStatusLabel">Live Network</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <!-- Logged-in User Profile Badge -->
+        <div id="userBadge" class="user-profile-badge hidden">
+          <div class="user-info-text">
+            <span id="userNameDisplay" class="user-display-name">Vedansh Maurya</span>
+            <span id="userRoleDisplay" class="user-role-label">Student</span>
+          </div>
+          <span id="walletPill" class="wallet-chip">💳 ₹<span id="walletBalanceVal">850</span></span>
+          <button class="btn-nav-logout" onclick="QuickBite.auth.logout()" title="Log out">Log out</button>
+        </div>
+
+        <!-- Role view switch (Only shown for staff or testing) -->
+        <div id="staffSwitchWrap" class="hidden">
+          <button class="btn btn-outline btn-sm" id="btnSwitchView" onclick="QuickBite.app.toggleView()">Switch View</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Area -->
+  <main class="site-main container">
+
+    <!-- ========================================== -->
+    <!-- 1. STUDENT ORDERING VIEW                   -->
+    <!-- ========================================== -->
+    <section id="studentView" class="fade-in">
+      
+      <!-- Hero Banner -->
+      <div class="hero-banner">
+        <div class="hero-text">
+          <h1>Pre-order before the bell rings.</h1>
+          <p>Order fresh meals, snacks & beverages right from your classroom. Pick up at Counter #1 without waiting in line.</p>
+        </div>
+        <div class="hero-chip" id="kitchenLoadChip">
+          <span>🍳</span> <span id="kitchenLoadText">Checking kitchen queue...</span>
+        </div>
+      </div>
+
+      <!-- Toolbar: Categories, Search & Veg Filters -->
+      <div class="toolbar-wrap">
+        <div class="category-nav" id="categoryNav">
+          <button class="cat-pill active" data-cat="all" onclick="QuickBite.menu.filterCategory('all')">🌟 All Items</button>
+          <button class="cat-pill" data-cat="fastfood" onclick="QuickBite.menu.filterCategory('fastfood')">🍔 Fast Food</button>
+          <button class="cat-pill" data-cat="meals" onclick="QuickBite.menu.filterCategory('meals')">🍛 Meals</button>
+          <button class="cat-pill" data-cat="snacks" onclick="QuickBite.menu.filterCategory('snacks')">🍟 Snacks</button>
+          <button class="cat-pill" data-cat="beverages" onclick="QuickBite.menu.filterCategory('beverages')">🥤 Beverages</button>
+        </div>
+
+        <div class="search-filter-box">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="menuSearchInput" placeholder="Search food items..." oninput="QuickBite.menu.handleSearch(this.value)">
+          </div>
+          <button class="diet-toggle-btn" id="vegFilterBtn" onclick="QuickBite.menu.toggleVegFilter()">🟢 Veg Only</button>
+        </div>
+      </div>
+
+      <!-- Food Menu & Sticky Cart Grid -->
+      <div class="student-grid">
+        <div class="menu-cards-grid" id="menuContainer">
+          <!-- Food cards dynamically rendered by js/menu.js -->
+        </div>
+
+        <!-- Shopping Cart Sidebar -->
+        <aside class="cart-card">
+          <div class="cart-header">
+            <h2>Your Order Tray</h2>
+            <button class="btn-sm btn-outline" onclick="QuickBite.cart.clear()" id="btnClearCart" style="display:none;">Clear</button>
+          </div>
+
+          <div class="cart-items-list" id="cartItemsList">
+            <!-- Items rendered by js/cart.js -->
+          </div>
+
+          <div class="cart-summary" id="cartSummary">
+            <div class="cart-summary-line">
+              <span>Subtotal</span>
+              <span id="cartSubtotal">₹0</span>
+            </div>
+            <div class="cart-summary-line total">
+              <span>Total Payable</span>
+              <span id="cartTotal">₹0</span>
+            </div>
+          </div>
+
+          <button id="btnProceedCheckout" class="btn btn-primary" style="width: 100%;" disabled onclick="QuickBite.payment.openCheckoutModal()">
+            Proceed to Payment
+          </button>
+        </aside>
+      </div>
+
+      <!-- Active Order Status Ticket -->
+      <div class="active-ticket-wrap" id="activeTicketContainer">
+        <!-- Live status ticket rendered by js/app.js -->
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. KITCHEN & MENU MANAGEMENT VIEW (STAFF)  -->
+    <!-- ========================================== -->
+    <section id="cafeView" class="hidden fade-in">
+      <div class="kds-container">
+        
+        <!-- Cafeteria Navigation Tabs -->
+        <div class="cafe-subnav">
+          <button id="tabBtnKds" class="cafe-subnav-btn active" onclick="QuickBite.menuManager.switchTab('kds')">
+            🍳 Kitchen Orders KDS
+          </button>
+          <button id="tabBtnMenuMgr" class="cafe-subnav-btn" onclick="QuickBite.menuManager.switchTab('menu')">
+            📋 Menu Catalog Manager
+          </button>
+        </div>
+
+        <!-- Section A: KDS Kanban Board -->
+        <div id="kdsBoardSection">
+          <div class="kds-header">
+            <div class="kds-title-wrap">
+              <h1>🍳 Live Kitchen Order Board</h1>
+              <span class="text-muted" style="font-size: 0.85rem;" id="kdsLastSynced">Live connected</span>
+            </div>
+            <div class="kds-controls">
+              <button class="btn btn-outline btn-sm" onclick="QuickBite.kitchen.refresh()">🔄 Refresh Board</button>
+            </div>
+          </div>
+
+          <div class="kds-board" style="margin-top: 16px;">
+            <!-- Column 1: New Orders -->
+            <div class="kds-column col-new">
+              <div class="kds-col-header">
+                <h3>1. New Orders</h3>
+                <span class="kds-col-count" id="countColNew">0</span>
+              </div>
+              <div id="kdsColNewList"></div>
+            </div>
+
+            <!-- Column 2: In Preparation -->
+            <div class="kds-column col-prep">
+              <div class="kds-col-header">
+                <h3>2. Cooking</h3>
+                <span class="kds-col-count" id="countColPrep">0</span>
+              </div>
+              <div id="kdsColPrepList"></div>
+            </div>
+
+            <!-- Column 3: Ready for Pickup -->
+            <div class="kds-column col-ready">
+              <div class="kds-col-header">
+                <h3>3. Ready for Pickup</h3>
+                <span class="kds-col-count" id="countColReady">0</span>
+              </div>
+              <div id="kdsColReadyList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section B: Menu Manager Dashboard -->
+        <div id="menuMgrSection" class="hidden">
+          <div class="menu-mgr-header">
+            <div>
+              <h1 style="font-size: 1.35rem; display: flex; align-items: center; gap: 8px;">
+                📋 Cafeteria Menu Management
+              </h1>
+              <p class="text-muted" style="font-size: 0.82rem; margin-top: 2px;">
+                Add new food items, adjust prices, edit descriptions, or toggle item stock availability in real-time.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="hero-chip" id="menuMgrTotalCount" style="padding: 6px 12px; font-size: 0.8rem;">0 items</span>
+              <button class="btn btn-primary btn-sm" onclick="QuickBite.menuManager.openAddModal()">
+                + Add New Food Item
+              </button>
+            </div>
+          </div>
+
+          <div class="menu-mgr-table-wrap">
+            <table class="menu-mgr-table">
+              <thead>
+                <tr>
+                  <th>Item Details</th>
+                  <th>Category</th>
+                  <th>Diet</th>
+                  <th>Price</th>
+                  <th>Prep Time</th>
+                  <th>Stock Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="menuMgrTableBody">
+                <!-- Dynamically populated by js/menuManager.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: Authentication & Login/Register    -->
+  <!-- ========================================== -->
+  <div id="authModal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div class="brand-icon" style="margin: 0 auto 10px; width: 44px; height: 44px; font-size: 24px;">⚡</div>
+        <h2 style="font-size: 1.5rem;">QuickBite Login</h2>
+        <p class="text-muted" style="font-size: 0.85rem;">Campus Cafeteria Pre-Order System</p>
+      </div>
+
+      <!-- Role Selection -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px; background: var(--page-bg); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+        <button id="btnRoleStudent" class="btn btn-sm btn-primary" style="flex:1;" onclick="QuickBite.auth.setRole('student')">Student Portal</button>
+        <button id="btnRoleCafe" class="btn btn-sm btn-outline" style="flex:1;" onclick="QuickBite.auth.setRole('cafe')">Cafeteria Staff</button>
+      </div>
+
+      <!-- Sign In vs Register Tabs -->
+      <div id="authModeTabs" style="display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; border-bottom: 1px solid var(--line); padding-bottom: 8px;">
+        <button id="tabSignIn" style="font-weight: 700; color: var(--amber-600); border-bottom: 2px solid var(--amber-500); padding-bottom: 4px;" onclick="QuickBite.auth.setMode('signin')">Sign In</button>
+        <button id="tabRegister" style="font-weight: 600; color: var(--ink-400); padding-bottom: 4px;" onclick="QuickBite.auth.setMode('register')">Register New ID</button>
+      </div>
+
+      <!-- Error Message Banner -->
+      <div id="authErrorMsg" class="hidden" style="background: var(--ruby-100); color: var(--ruby-600); padding: 10px; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 12px; font-weight: 500;"></div>
+
+      <form id="authForm" onsubmit="QuickBite.auth.handleSubmit(event)">
+        <div id="regNameGroup" class="form-group hidden">
+          <label>Full Name</label>
+          <input type="text" id="regNameInput" placeholder="e.g. Vedansh Maurya">
+        </div>
+
+        <div id="regEmailGroup" class="form-group hidden">
+          <label>Campus Email Address <span class="text-amber">*</span></label>
+          <input type="email" id="regEmailInput" placeholder="e.g. vedansh@galgotiasuniversity.edu.in">
+        </div>
+
+        <div class="form-group">
+          <label id="authIdLabel">Student ID / Roll No</label>
+          <input type="text" id="authIdInput" placeholder="e.g. vedansh" required autocomplete="username">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 18px;">
+          <label>Password</label>
+          <input type="password" id="authPasswordInput" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" id="btnAuthSubmit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+      </form>
+
+      <!-- Quick Test Fill Shortcuts -->
+      <div style="margin-top: 18px; padding: 12px; background: var(--page-bg); border-radius: var(--radius-md); border: 1px solid var(--card-border); font-size: 0.78rem;">
+        <div style="font-weight: 700; color: var(--ink-800); margin-bottom: 6px;">Default Test Accounts:</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span>Student: <b>vedansh</b> / <b>password123</b></span>
+          <button type="button" class="text-amber" style="font-weight: 700;" onclick="QuickBite.auth.quickFill('student', 'vedansh', 'password123')">Fill</button>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span>Cafeteria: <b>cafe1</b> / <b>cafe123</b></span>
+          <button type="button" class="text-amber" style="font-weight: 700;" onclick="QuickBite.auth.quickFill('cafe', 'cafe1', 'cafe123')">Fill</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: Email OTP Verification Flow         -->
+  <!-- ========================================== -->
+  <div id="emailVerifyModal" class="modal-overlay hidden">
+    <div class="modal-card" style="text-align: center;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--amber-50); border: 1px solid var(--amber-100); color: var(--amber-600); display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 12px;">✉️</div>
+      <h2 style="font-size: 1.35rem; margin-bottom: 4px;">Verify Campus Email</h2>
+      <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 16px;">
+        We've sent a 6-digit verification code to<br><b id="verifyTargetEmail" style="color: var(--ink-900);">student@campus.edu.in</b>
+      </p>
+
+      <div id="verifyErrorMsg" class="hidden" style="background: var(--ruby-100); color: var(--ruby-600); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 12px; text-align: left;"></div>
+
+      <!-- Preview Box for Local / Offline / Demo convenience -->
+      <div id="otpPreviewBox" class="upi-details-pill hidden" style="justify-content: space-between; margin-bottom: 14px; background: var(--amber-50); border-color: var(--gold-400);">
+        <!-- Filled by js/auth.js -->
+      </div>
+
+      <form onsubmit="QuickBite.auth.handleVerifySubmit(event)">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <input type="text" id="otpCodeInput" placeholder="••••••" maxlength="6" style="text-align: center; font-size: 1.8rem; letter-spacing: 0.3em; font-family: monospace; font-weight: 800; padding: 10px; background: var(--page-bg);" required>
+        </div>
+
+        <button type="submit" id="btnSubmitOtp" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">
+          Verify & Activate Account
+        </button>
+      </form>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 0.82rem;">
+        <button type="button" id="btnResendOtp" class="btn-outline btn-sm" onclick="QuickBite.auth.resendCode()">
+          Resend Code
+        </button>
+        <button type="button" class="text-muted" style="text-decoration: underline;" onclick="QuickBite.auth.closeVerifyModal(); QuickBite.auth.openModal();">
+          Cancel / Back
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: Add / Edit Menu Item (Cafeteria)    -->
+  <!-- ========================================== -->
+  <div id="menuItemModal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2 id="menuModalTitle" style="font-size: 1.3rem;">Add New Menu Item</h2>
+        <button class="modal-close" onclick="QuickBite.menuManager.closeModal()">×</button>
+      </div>
+
+      <form id="menuItemForm" onsubmit="QuickBite.menuManager.handleSubmit(event)">
+        
+        <div class="form-group">
+          <label>Item Name <span class="text-amber">*</span></label>
+          <input type="text" id="itemNameInput" placeholder="e.g. Tandoori Paneer Roll" required>
+        </div>
+
+        <div class="form-group">
+          <label>Short Description</label>
+          <input type="text" id="itemDescInput" placeholder="e.g. Fresh grilled paneer, onions & mint sauce">
+        </div>
+
+        <div class="card-inputs-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 6px;">
+          <div class="form-group">
+            <label>Price (₹) <span class="text-amber">*</span></label>
+            <input type="number" id="itemPriceInput" min="0" step="1" placeholder="e.g. 75" required>
+          </div>
+
+          <div class="form-group">
+            <label>Category</label>
+            <select id="itemCategoryInput" style="padding: 8px 12px; border: 1px solid var(--card-border); border-radius: var(--radius-sm); background: #FFFFFF;">
+              <option value="fastfood">Fast Food</option>
+              <option value="meals">Meals</option>
+              <option value="snacks">Snacks</option>
+              <option value="beverages">Beverages</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card-inputs-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 8px;">
+          <div class="form-group">
+            <label>Dietary Type</label>
+            <div style="display: flex; gap: 12px; margin-top: 4px;">
+              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="radio" name="dietType" id="itemIsVegRadio" value="true" checked>
+                <span class="diet-badge veg"></span> Veg
+              </label>
+              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="radio" name="dietType" id="itemIsNonVegRadio" value="false">
+                <span class="diet-badge non-veg"></span> Non-Veg
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Prep Time</label>
+            <input type="text" id="itemPrepTimeInput" placeholder="e.g. 5-7 mins">
+          </div>
+        </div>
+
+        <!-- Food Emoji Icon Selection -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Item Icon: <span id="selectedIconPreview" style="font-size: 1.2rem; vertical-align: middle;">🍔</span></label>
+          <div class="icon-selector-grid">
+            <button type="button" class="icon-btn-opt selected" data-icon="🍔" onclick="QuickBite.menuManager.selectIcon('🍔')">🍔</button>
+            <button type="button" class="icon-btn-opt" data-icon="🌯" onclick="QuickBite.menuManager.selectIcon('🌯')">🌯</button>
+            <button type="button" class="icon-btn-opt" data-icon="🍕" onclick="QuickBite.menuManager.selectIcon('🍕')">🍕</button>
+            <button type="button" class="icon-btn-opt" data-icon="🍜" onclick="QuickBite.menuManager.selectIcon('🍜')">🍜</button>
+            <button type="button" class="icon-btn-opt" data-icon="🥪" onclick="QuickBite.menuManager.selectIcon('🥪')">🥪</button>
+            <button type="button" class="icon-btn-opt" data-icon="🍛" onclick="QuickBite.menuManager.selectIcon('🍛')">🍛</button>
+            <button type="button" class="icon-btn-opt" data-icon="🍱" onclick="QuickBite.menuManager.selectIcon('🍱')">🍱</button>
+            <button type="button" class="icon-btn-opt" data-icon="🍗" onclick="QuickBite.menuManager.selectIcon('🍗')">🍗</button>
+            <button type="button" class="icon-btn-opt" data-icon="🍟" onclick="QuickBite.menuManager.selectIcon('🍟')">🍟</button>
+            <button type="button" class="icon-btn-opt" data-icon="🥟" onclick="QuickBite.menuManager.selectIcon('🥟')">🥟</button>
+            <button type="button" class="icon-btn-opt" data-icon="🥤" onclick="QuickBite.menuManager.selectIcon('🥤')">🥤</button>
+            <button type="button" class="icon-btn-opt" data-icon="🧃" onclick="QuickBite.menuManager.selectIcon('🧃')">🧃</button>
+            <button type="button" class="icon-btn-opt" data-icon="☕" onclick="QuickBite.menuManager.selectIcon('☕')">☕</button>
+            <button type="button" class="icon-btn-opt" data-icon="🍰" onclick="QuickBite.menuManager.selectIcon('🍰')">🍰</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 18px;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+            <input type="checkbox" id="itemInStockInput" checked>
+            <span>Item is currently In Stock & available for ordering</span>
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn btn-outline" style="flex: 1;" onclick="QuickBite.menuManager.closeModal()">Cancel</button>
+          <button type="submit" id="btnSaveMenuItem" class="btn btn-primary" style="flex: 1;">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: Checkout & Payment Gateway          -->
+  <!-- ========================================== -->
+  <div id="checkoutModal" class="modal-overlay hidden">
+    <div class="modal-card checkout-modal-card">
+      <div class="modal-header">
+        <h2 style="font-size: 1.3rem;">Order Checkout</h2>
+        <button class="modal-close" onclick="QuickBite.payment.closeCheckoutModal()">×</button>
+      </div>
+
+      <!-- Order Tray Breakdown -->
+      <div class="checkout-section-title">Order Summary</div>
+      <div id="checkoutItemsList" style="max-height: 140px; overflow-y: auto; margin-bottom: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px;"></div>
+
+      <!-- Promo Coupon Box -->
+      <div class="coupon-box">
+        <input type="text" id="couponInput" placeholder="ENTER PROMO (e.g. STUDENT10)">
+        <button class="btn btn-sm btn-primary" onclick="QuickBite.payment.applyCoupon()">Apply</button>
+      </div>
+      <div id="couponStatusMessage"></div>
+
+      <!-- Price Breakdown -->
+      <div style="background: var(--page-bg); padding: 12px 14px; border-radius: var(--radius-md); margin-bottom: 18px; border: 1px solid var(--card-border);">
+        <div class="cart-summary-line">
+          <span>Items Subtotal</span>
+          <span id="checkoutSubtotal">₹0</span>
+        </div>
+        <div class="cart-summary-line text-emerald" id="checkoutDiscountLine" style="display:none;">
+          <span>Promo Discount</span>
+          <span id="checkoutDiscount">-₹0</span>
+        </div>
+        <div class="cart-summary-line total" style="margin-top: 6px; padding-top: 6px;">
+          <span>Total Amount</span>
+          <span id="checkoutTotalAmount" class="text-amber">₹0</span>
+        </div>
+      </div>
+
+      <!-- Payment Method Selection Tabs -->
+      <div class="checkout-section-title">Choose Payment Option</div>
+      <div class="payment-methods-grid">
+        <div class="pay-method-tab active" data-method="upi" onclick="QuickBite.payment.selectMethod('upi')">
+          <span class="pay-tab-icon">📱</span>
+          <span class="pay-tab-name">UPI / QR Code</span>
+          <span class="pay-tab-hint">GPay, PhonePe, Paytm</span>
+        </div>
+        <div class="pay-method-tab" data-method="wallet" onclick="QuickBite.payment.selectMethod('wallet')">
+          <span class="pay-tab-icon">💳</span>
+          <span class="pay-tab-name">Campus Card</span>
+          <span class="pay-tab-hint">Student Digital Wallet</span>
+        </div>
+        <div class="pay-method-tab" data-method="card" onclick="QuickBite.payment.selectMethod('card')">
+          <span class="pay-tab-icon">💳</span>
+          <span class="pay-tab-name">Debit / Credit</span>
+          <span class="pay-tab-hint">Visa, Mastercard, RuPay</span>
+        </div>
+        <div class="pay-method-tab" data-method="cash" onclick="QuickBite.payment.selectMethod('cash')">
+          <span class="pay-tab-icon">💵</span>
+          <span class="pay-tab-name">Pay at Counter</span>
+          <span class="pay-tab-hint">Cash upon Food Pickup</span>
+        </div>
+      </div>
+
+      <!-- Method Panels -->
+
+      <!-- 1. UPI QR Code Panel -->
+      <div id="panelUpi" class="pay-panel active">
+        <div class="upi-qr-card">
+          <p style="font-size: 0.82rem; color: var(--ink-600);">Scan QR with any UPI app to pay <b id="upiPayAmountDisplay">₹0</b></p>
+          <div class="upi-qr-img-wrap">
+            <img id="upiQrImage" src="" alt="UPI Payment QR">
+          </div>
+          <div class="upi-details-pill">
+            <span>UPI ID: <b id="upiIdDisplay">cafeteria@upi</b></span>
+            <span class="btn-copy-upi" onclick="QuickBite.payment.copyUpiId()">Copy</span>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="QuickBite.payment.confirmOrderWithPayment('upi')">
+            ✓ I Have Paid / Simulate Success
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Campus Wallet Panel -->
+      <div id="panelWallet" class="pay-panel">
+        <div class="campus-card-preview">
+          <div class="card-preview-head">
+            <div class="card-chip-icon"></div>
+            <span style="font-size: 0.75rem; letter-spacing: 0.08em; font-weight: 700;">CAMPUS DIGITAL PASS</span>
+          </div>
+          <div style="font-size: 0.88rem; font-weight: 700;" id="walletCardholder">Vedansh Maurya</div>
+          <div class="card-balance-box">
+            <div class="card-balance-label">Current Balance</div>
+            <div class="card-balance-value">₹<span id="walletModalBalanceVal">850</span></div>
+          </div>
+        </div>
+
+        <div id="walletSufficiencyMsg" style="font-size: 0.82rem; margin-bottom: 12px; font-weight: 600;"></div>
+
+        <button id="btnPayWallet" class="btn btn-primary" style="width: 100%;" onclick="QuickBite.payment.confirmOrderWithPayment('wallet')">
+          Confirm & Pay with Campus Card
+        </button>
+      </div>
+
+      <!-- 3. Card Panel -->
+      <div id="panelCard" class="pay-panel">
+        <div class="form-group">
+          <label>Card Number</label>
+          <input type="text" id="cardNumInput" placeholder="4532 •••• •••• 8892" maxlength="19">
+        </div>
+        <div class="card-inputs-grid">
+          <div class="form-group">
+            <label>Cardholder Name</label>
+            <input type="text" id="cardNameInput" placeholder="Name on card">
+          </div>
+          <div class="form-group">
+            <label>Expiry</label>
+            <input type="text" id="cardExpiryInput" placeholder="MM/YY" maxlength="5">
+          </div>
+          <div class="form-group">
+            <label>CVV</label>
+            <input type="password" id="cardCvvInput" placeholder="•••" maxlength="4">
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="QuickBite.payment.confirmOrderWithPayment('card')">
+          Pay with Card
+        </button>
+      </div>
+
+      <!-- 4. Cash on Pickup Panel -->
+      <div id="panelCash" class="pay-panel">
+        <div style="text-align: center; padding: 10px;">
+          <div style="font-size: 2.2rem; margin-bottom: 6px;">💵</div>
+          <p style="font-weight: 700; margin-bottom: 4px;">Pay at Pickup Counter</p>
+          <p style="font-size: 0.82rem; color: var(--ink-500); margin-bottom: 16px;">
+            Your order will be queued and cooked immediately. Please show your Order Token and pay cash at Counter #1.
+          </p>
+          <button class="btn btn-primary" style="width: 100%;" onclick="QuickBite.payment.confirmOrderWithPayment('cash')">
+            Place Order (Pay at Counter)
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: Order Receipt & Pickup Token        -->
+  <!-- ========================================== -->
+  <div id="receiptModal" class="modal-overlay hidden">
+    <div class="modal-card" style="text-align: center;">
+      <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--emerald-100); color: var(--emerald-600); display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 12px;">✓</div>
+      <h2 style="font-size: 1.4rem;">Order Placed Successfully!</h2>
+      <p class="text-muted" style="font-size: 0.85rem;">The cafeteria kitchen has received your order.</p>
+
+      <div class="receipt-token-badge">
+        <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-500); font-weight: 700;">YOUR PICKUP TOKEN</div>
+        <div class="receipt-token-num" id="receiptTokenNum">#101</div>
+        <div id="receiptPaymentBadge" class="receipt-status-pill">PAID ✓</div>
+      </div>
+
+      <div style="background: var(--page-bg); border-radius: var(--radius-md); padding: 12px; margin-bottom: 16px; border: 1px solid var(--card-border); font-size: 0.85rem; text-align: left;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+          <span class="text-muted">Pickup Location:</span>
+          <b>Counter #1 (Express Pickup)</b>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+          <span class="text-muted">Estimated Prep Time:</span>
+          <b id="receiptEstTime">5-8 mins</b>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span class="text-muted">Transaction ID:</span>
+          <span id="receiptTxnId" style="font-family: monospace; font-size: 0.78rem;">TXN-...</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-outline" style="flex: 1;" onclick="window.print()">🖨️ Print / Save</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="QuickBite.payment.closeReceiptModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Stack -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Modular Client JavaScript -->
+  <script src="js/api.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/menuManager.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/payment.js"></script>
+  <script src="js/kitchen.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

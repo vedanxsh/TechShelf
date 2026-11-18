@@ -1,0 +1,293 @@
+/* QuickBite v2.0 - Payment Gateway & Checkout Styles */
+
+.checkout-modal-card {
+  max-width: 520px;
+}
+
+.checkout-section-title {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-400);
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+/* Coupon Promo Box */
+.coupon-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  background: var(--page-bg);
+  padding: 8px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--card-border);
+}
+
+.coupon-box input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  background: #FFFFFF;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--ink-900);
+}
+
+.coupon-box input:focus {
+  border-color: var(--amber-500);
+  outline: none;
+}
+
+.coupon-alert {
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.coupon-alert.success {
+  background: var(--emerald-50);
+  color: var(--emerald-600);
+  border: 1px solid var(--emerald-100);
+}
+
+.coupon-alert.error {
+  background: var(--ruby-100);
+  color: var(--ruby-600);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Payment Method Tabs */
+.payment-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.pay-method-tab {
+  border: 1.5px solid var(--card-border);
+  background: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.16s ease;
+}
+
+.pay-method-tab:hover {
+  border-color: var(--amber-500);
+  background: var(--amber-50);
+}
+
+.pay-method-tab.active {
+  border-color: var(--amber-500);
+  background: var(--amber-50);
+  box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
+}
+
+.pay-tab-icon {
+  font-size: 1.5rem;
+}
+
+.pay-tab-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.pay-tab-hint {
+  font-size: 0.72rem;
+  color: var(--ink-400);
+}
+
+/* Method Specific Content Boxes */
+.pay-panel {
+  display: none;
+  background: var(--page-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.pay-panel.active {
+  display: block;
+}
+
+/* UPI QR View */
+.upi-qr-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.upi-qr-img-wrap {
+  width: 180px;
+  height: 180px;
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upi-qr-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.upi-details-pill {
+  background: #FFFFFF;
+  border: 1px solid var(--card-border);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  color: var(--ink-700);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-copy-upi {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--amber-500);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Campus Wallet Panel */
+.campus-card-preview {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  color: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 12px;
+}
+
+.card-preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.card-chip-icon {
+  width: 28px;
+  height: 22px;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  border-radius: 4px;
+}
+
+.card-balance-box {
+  margin-top: 10px;
+}
+
+.card-balance-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--ink-300);
+}
+
+.card-balance-value {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--gold-400);
+}
+
+/* Credit/Debit Card Form */
+.card-inputs-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 10px;
+}
+
+.card-input-full {
+  grid-column: span 3;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.form-group label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ink-600);
+}
+
+.form-group input {
+  padding: 8px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  background: #FFFFFF;
+}
+
+/* Receipt Modal */
+.receipt-token-badge {
+  background: var(--amber-50);
+  border: 2px dashed var(--amber-500);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  text-align: center;
+  margin: 16px 0;
+}
+
+.receipt-token-num {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--amber-600);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.receipt-status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.receipt-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin: 12px 0;
+}
+
+.receipt-items-table td {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.receipt-items-table tr:last-child td {
+  border-bottom: none;
+}

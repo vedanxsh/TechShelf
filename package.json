@@ -1,0 +1,31 @@
+{
+  "name": "quickbite-cafeteria",
+  "version": "2.0.0",
+  "description": "QuickBite - Modern Cafeteria Pre-Order & Kitchen Management System with Multi-Device Sync and Payment Gateway",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node tests/smoke.test.js"
+  },
+  "keywords": [
+    "cafeteria",
+    "pre-order",
+    "kds",
+    "food-ordering",
+    "kitchen-display",
+    "express",
+    "payments",
+    "upi"
+  ],
+  "author": "Vedansh Maurya",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}

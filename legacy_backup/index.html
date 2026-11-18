@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QuickBite — Cafeteria Pre-Order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1B2A22; --paper:#FBF8F1; --card:#FFFFFF; --line:#E7E0CB;
+  --amber:#E8A33D; --amber-ink:#7A4E10; --amber-tint:#FBEBCD;
+  --green:#3F8F5F; --green-tint:#E1F3E7; --green-ink:#215936;
+  --paprika:#D9633B; --paprika-tint:#FBE7DE; --paprika-ink:#8C3A1D;
+  --muted:#847C6B; --font-d:'Space Grotesk',sans-serif; --font-b:'Inter',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-b);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-d);margin:0}
+button{font-family:inherit;cursor:pointer;border:0;background:none}
+
+.top{background:var(--ink);color:#F3EEDD;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;border-bottom:3px solid var(--amber)}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:34px;height:34px;border-radius:9px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#3A2306}
+.brand-text .logo{font-family:var(--font-d);font-weight:700;font-size:19px;line-height:1.1}
+.brand-text .tag{font-size:11.5px;color:#B9C0AE;display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(63,143,95,.25)}
+.switch{background:#28352A;padding:4px;border-radius:11px;display:flex;gap:2px}
+.switch button{color:#B9C0AE;padding:9px 16px;border-radius:8px;font-weight:600;font-size:14px;font-family:var(--font-d)}
+.switch .on{background:var(--amber);color:#3A2306}
+
+.user-badge{display:flex;align-items:center;gap:12px}
+.user-pill{background:#28352A;border:1px solid #3B4A3D;color:#E1E9DA;padding:6px 12px;border-radius:999px;font-size:12.5px;display:flex;align-items:center;gap:6px}
+.user-pill b{color:var(--amber)}
+.btn-logout{background:#28352A;border:1px solid #445447;color:#D8DFC9;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;font-family:var(--font-d);transition:background 0.2s}
+.btn-logout:hover{background:#3B4D3F;color:#fff}
+
+main{max-width:1040px;margin:26px auto 60px;padding:0 18px}
+.hero{background:var(--ink);color:#F3EEDD;border-radius:20px;padding:26px 28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(232,163,61,.35),transparent 70%)}
+.hero h1{font-size:26px;font-weight:600;letter-spacing:-.02em;max-width:340px}
+.hero p{margin:8px 0 0;color:#B9C0AE;font-size:14px;max-width:320px}
+.chip{background:rgba(232,163,61,.15);border:1px solid rgba(232,163,61,.4);color:var(--amber);border-radius:999px;padding:8px 14px;font-size:12.5px;font-weight:600;white-space:nowrap}
+
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:14px;font-weight:600}
+
+.row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.food-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.row-main{display:flex;gap:12px;align-items:center}
+.row h3{font-size:15px;font-weight:600}
+.muted{color:var(--muted);font-size:12.5px}
+.price{font-family:var(--font-d);font-weight:600;font-size:13.5px;color:var(--ink);margin-top:2px}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:28px;height:28px;border-radius:8px;background:var(--paper);border:1px solid var(--line);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.stepper button.plus{background:var(--ink);color:#F3EEDD;border-color:var(--ink)}
+.stepper span{font-family:var(--font-d);font-weight:600;min-width:14px;text-align:center}
+
+.receipt{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;position:relative}
+.cartrow{display:flex;justify-content:space-between;font-size:13.5px;padding:7px 0;color:var(--ink)}
+.cartrow span:first-child{color:var(--muted)}
+.total{display:flex;justify-content:space-between;font-family:var(--font-d);font-weight:700;font-size:19px;margin:14px 0 12px;padding-top:12px;border-top:1px solid var(--line)}
+.primary{width:100%;background:var(--amber);color:#3A2306;padding:14px;border-radius:11px;font-weight:700;font-size:14.5px;font-family:var(--font-d);letter-spacing:.01em;cursor:pointer}
+.primary:disabled{background:#E4DFCF;color:#A69F8C;cursor:not-allowed}
+.primary:not(:disabled):active{transform:translateY(1px)}
+
+.ticket{background:var(--ink);color:#F3EEDD;border-radius:16px;padding:20px 22px;margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.ticket .num{font-family:var(--font-d);font-size:13px;color:#B9C0AE}
+.ticket h3{font-size:17px;margin:3px 0 6px}
+.ticket .items{font-size:13px;color:#D8D2BF}
+.stages{display:flex;gap:6px;align-items:center;margin-top:10px}
+.stage{width:8px;height:8px;border-radius:50%;background:#4A5A46}
+.stage.done{background:var(--amber)}
+.status{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:700;font-family:var(--font-d)}
+.status.new{background:var(--paprika-tint);color:var(--paprika-ink)}
+.status.preparing{background:var(--amber-tint);color:var(--amber-ink)}
+.status.ready{background:var(--green-tint);color:var(--green-ink)}
+
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.col{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;min-height:120px}
+.col-head{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 12px;border-bottom:2px solid var(--line);margin-bottom:12px}
+.col-head h3{font-size:13.5px;text-transform:uppercase;letter-spacing:.05em}
+.col-head .count{font-family:var(--font-d);font-size:12px;background:var(--paper);border-radius:999px;padding:2px 9px}
+.col.new .col-head{border-color:var(--paprika)}
+.col.preparing .col-head{border-color:var(--amber)}
+.col.ready .col-head{border-color:var(--green)}
+.order{border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:10px;background:var(--paper)}
+.orderhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.orderhead b{font-family:var(--font-d);font-size:14.5px}
+.order .items{font-size:12.5px;color:var(--muted);margin-bottom:9px;line-height:1.5}
+.order .foot{display:flex;justify-content:space-between;align-items:center}
+.order .price{margin:0}
+.act{padding:8px 12px;border-radius:8px;font-size:12.5px;font-weight:700;font-family:var(--font-d);cursor:pointer}
+.act.blue{background:var(--ink);color:#F3EEDD}
+.act.green{background:var(--green);color:#fff}
+
+.empty{text-align:center;padding:26px 10px;color:var(--muted);font-size:13px}
+.hidden{display:none !important}
+@media(max-width:760px){
+  .grid{grid-template-columns:1fr}
+  .board{grid-template-columns:1fr}
+  .hero{flex-direction:column;align-items:flex-start}
+  .switch button{padding:8px 11px;font-size:13px}
+  .user-badge{gap:6px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <div class="mark">⚡</div>
+    <div class="brand-text">
+      <div class="logo">QuickBite</div>
+      <div class="tag"><span class="dot"></span><span id="syncLabel">Network sync</span></div>
+    </div>
+  </div>
+  <div id="userBadge" class="user-badge" style="display:none;">
+    <div class="user-pill"><span id="userRoleIcon">👤</span> <span id="userNameDisplay">User</span> <b id="userRoleDisplay">(Student)</b></div>
+    <button class="btn-logout" onclick="doLogout()">Log out</button>
+  </div>
+</header>
+
+<main>
+<section id="studentView">
+  <div class="hero">
+    <div>
+      <h1>Order before the bell rings.</h1>
+      <p>Place your order from class and skip the lunch queue entirely.</p>
+    </div>
+    <div class="chip" id="liveChip">No orders in the kitchen yet</div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h2>Today's menu</h2>
+      <div id="menu"></div>
+    </div>
+    <div class="receipt">
+      <h2 style="text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-size:15px;margin-bottom:12px">Your order</h2>
+      <div id="cart"></div>
+    </div>
+  </div>
+  <div id="myOrderCard"></div>
+</section>
+
+<section id="cafeView" class="hidden">
+  <div class="hero">
+    <div>
+      <h1>Kitchen dashboard</h1>
+      <p>Pre-orders move across the board as they're prepared.</p>
+    </div>
+    <div class="chip" id="orderCount">0 orders</div>
+  </div>
+  <div class="board">
+    <div class="col new"><div class="col-head"><h3>New</h3><span class="count" id="cNew">0</span></div><div id="colNew"></div></div>
+    <div class="col preparing"><div class="col-head"><h3>Preparing</h3><span class="count" id="cPrep">0</span></div><div id="colPrep"></div></div>
+    <div class="col ready"><div class="col-head"><h3>Ready</h3><span class="count" id="cReady">0</span></div><div id="colReady"></div></div>
+  </div>
+</section>
+</main>
+
+<!-- Login / Register Overlay -->
+<div id="loginView" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(27,42,34,0.94);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:18px;">
+  <div class="card" style="width:100%;max-width:420px;padding:26px 22px;border-radius:20px;box-shadow:0 24px 48px rgba(0,0,0,0.35);background:var(--card);">
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
+      <div class="mark">⚡</div>
+      <h1 style="font-size:24px;font-weight:700;">QuickBite</h1>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:13.5px;margin:0 0 18px;">Pre-order & Cafeteria Management System</p>
+
+    <!-- Role Selection -->
+    <div style="display:flex;gap:6px;margin-bottom:16px;background:var(--paper);padding:4px;border-radius:12px;border:1px solid var(--line);">
+      <button id="btnRoleStudent" class="act" style="flex:1;background:var(--amber);color:#3A2306;padding:9px;border-radius:8px;font-weight:700;" onclick="setLoginRole('student')">Student</button>
+      <button id="btnRoleCafe" class="act" style="flex:1;background:none;color:var(--muted);padding:9px;border-radius:8px;font-weight:700;" onclick="setLoginRole('cafe')">Cafeteria</button>
+    </div>
+
+    <!-- Mode Toggle: Sign In / Register -->
+    <div id="modeToggleWrap" style="display:flex;justify-content:center;gap:20px;margin-bottom:16px;border-bottom:1px solid var(--line);padding-bottom:10px;">
+      <button id="tabSignIn" style="font-weight:700;font-size:13.5px;color:var(--ink);border-bottom:2px solid var(--amber);padding-bottom:4px;" onclick="setAuthMode('signin')">Sign In</button>
+      <button id="tabRegister" style="font-weight:600;font-size:13.5px;color:var(--muted);padding-bottom:4px;" onclick="setAuthMode('register')">Register New ID</button>
+    </div>
+
+    <!-- Error message display -->
+    <div id="loginError" style="display:none;background:var(--paprika-tint);color:var(--paprika-ink);border:1px solid var(--paprika);padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:14px;text-align:left;font-weight:500;"></div>
+
+    <!-- Form Inputs -->
+    <form onsubmit="handleAuthSubmit(event)">
+      <div id="nameFieldWrap" style="display:none;margin-bottom:12px;text-align:left;">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;">Full Name</label>
+        <input type="text" id="regName" placeholder="e.g. Vedansh Maurya" style="width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;background:var(--paper);color:var(--ink);">
+      </div>
+
+      <div style="margin-bottom:12px;text-align:left;">
+        <label id="idLabel" style="display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;">Student ID / Roll No</label>
+        <input type="text" id="loginId" placeholder="e.g. vedansh" style="width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;background:var(--paper);color:var(--ink);" autocomplete="username" required>
+      </div>
+
+      <div style="margin-bottom:18px;text-align:left;">
+        <label style="display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;">Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" style="width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:14px;background:var(--paper);color:var(--ink);" autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" id="authSubmitBtn" class="primary" style="margin-bottom:14px;">Sign In</button>
+    </form>
+
+    <!-- Credential Reference / Auto-Fill -->
+    <div style="padding:12px;background:var(--paper);border:1px solid var(--line);border-radius:12px;font-size:12px;text-align:left;color:var(--muted);">
+      <div style="font-weight:700;color:var(--ink);margin-bottom:6px;">Default Test Accounts:</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <span>Student: <b>vedansh</b> / <b>password123</b></span>
+        <button type="button" style="color:var(--amber-ink);text-decoration:underline;font-weight:600;font-size:12px;" onclick="fillCreds('student','vedansh','password123')">Fill</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span>Cafeteria: <b>cafe1</b> / <b>cafe123</b></span>
+        <button type="button" style="color:var(--amber-ink);text-decoration:underline;font-weight:600;font-size:12px;" onclick="fillCreds('cafe','cafe1','cafe123')">Fill</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ICONS={1:"🍔",2:"🌯",3:"🍜",4:"🥙",5:"🍟",6:"🥤"};
+const menu=[
+ {id:1,name:"Veg Burger",desc:"Cheese + fresh vegetables",price:60},
+ {id:2,name:"Chicken Roll",desc:"Spiced chicken + sauce",price:70},
+ {id:3,name:"Masala Maggi",desc:"Hot & quick",price:45},
+ {id:4,name:"Paneer Wrap",desc:"Paneer + vegetables",price:65},
+ {id:5,name:"French Fries",desc:"Crispy salted fries",price:40},
+ {id:6,name:"Cold Drink",desc:"Chilled 300ml",price:30}
+];
+
+let cart={};
+let orders=[];
+let currentUser=null;
+try {
+  currentUser=JSON.parse(sessionStorage.getItem('qb_user')||'null');
+} catch(e) { currentUser=null; }
+
+let currentRole=sessionStorage.getItem('qb_role')||'student';
+let authMode='signin';
+
+function setLoginRole(role){
+  currentRole=role;
+  const isStudent=role==='student';
+  document.getElementById('btnRoleStudent').style.background=isStudent?'var(--amber)':'none';
+  document.getElementById('btnRoleStudent').style.color=isStudent?'#3A2306':'var(--muted)';
+  document.getElementById('btnRoleCafe').style.background=!isStudent?'var(--amber)':'none';
+  document.getElementById('btnRoleCafe').style.color=!isStudent?'#3A2306':'var(--muted)';
+
+  document.getElementById('idLabel').textContent=isStudent?'Student ID / Roll No':'Cafeteria Staff ID';
+  document.getElementById('loginId').placeholder=isStudent?'e.g. vedansh':'e.g. cafe1';
+
+  // Cafeteria accounts are staff managed; only students self-register
+  if(!isStudent && authMode==='register'){
+    setAuthMode('signin');
+  }
+  document.getElementById('modeToggleWrap').style.display=isStudent?'flex':'none';
+  clearError();
+}
+
+function setAuthMode(mode){
+  authMode=mode;
+  const isSignIn=mode==='signin';
+  document.getElementById('tabSignIn').style.color=isSignIn?'var(--ink)':'var(--muted)';
+  document.getElementById('tabSignIn').style.borderBottom=isSignIn?'2px solid var(--amber)':'none';
+  document.getElementById('tabRegister').style.color=!isSignIn?'var(--ink)':'var(--muted)';
+  document.getElementById('tabRegister').style.borderBottom=!isSignIn?'2px solid var(--amber)':'none';
+
+  document.getElementById('nameFieldWrap').style.display=isSignIn?'none':'block';
+  document.getElementById('authSubmitBtn').textContent=isSignIn?'Sign In':'Create Account';
+  clearError();
+}
+
+function showError(msg){
+  const el=document.getElementById('loginError');
+  el.textContent=msg;
+  el.style.display='block';
+}
+
+function clearError(){
+  const el=document.getElementById('loginError');
+  el.textContent='';
+  el.style.display='none';
+}
+
+function fillCreds(role, id, pass){
+  setLoginRole(role);
+  setAuthMode('signin');
+  document.getElementById('loginId').value=id;
+  document.getElementById('loginPassword').value=pass;
+  clearError();
+}
+
+async function handleAuthSubmit(e){
+  if(e) e.preventDefault();
+  clearError();
+  const id=document.getElementById('loginId').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  const name=document.getElementById('regName').value.trim();
+
+  if(!id || !password){
+    showError("Please enter both ID and password.");
+    return;
+  }
+
+  const endpoint=authMode==='register'?'/api/register':'/api/login';
+  const payload=authMode==='register'
+    ? { id, name, password, role: currentRole }
+    : { id, password, role: currentRole };
+
+  try {
+    const res=await fetch(endpoint, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    const data=await res.json();
+    if(data.success && data.user){
+      currentUser=data.user;
+      sessionStorage.setItem('qb_user', JSON.stringify(currentUser));
+      sessionStorage.setItem('qb_role', currentUser.role);
+      applyLoginState();
+    } else {
+      showError(data.message || "Authentication failed");
+    }
+  } catch(err){
+    showError("Unable to connect to server. Ensure server.js is running.");
+  }
+}
+
+function applyLoginState(){
+  if(!currentUser){
+    document.getElementById('loginView').style.display='flex';
+    document.getElementById('userBadge').style.display='none';
+    return;
+  }
+  document.getElementById('loginView').style.display='none';
+  document.getElementById('userBadge').style.display='flex';
+  document.getElementById('userNameDisplay').textContent=currentUser.name || currentUser.id;
+  const isCafe=currentUser.role==='cafe';
+  document.getElementById('userRoleIcon').textContent=isCafe?'🍳':'👤';
+  document.getElementById('userRoleDisplay').textContent=isCafe?'(Cafeteria)':'(Student)';
+
+  setView(isCafe?'cafe':'student');
+  pull();
+}
+
+function doLogout(){
+  currentUser=null;
+  sessionStorage.removeItem('qb_user');
+  sessionStorage.removeItem('qb_role');
+  cart={};
+  document.getElementById('loginId').value='';
+  document.getElementById('loginPassword').value='';
+  document.getElementById('regName').value='';
+  clearError();
+  renderCart();
+  renderMenu();
+  applyLoginState();
+}
+
+function money(n){return "₹"+n}
+
+function renderMenu(){
+ document.getElementById("menu").innerHTML=menu.map(x=>`<div class="row">
+  <div class="row-main">
+    <div class="food-ico" style="background:var(--amber-tint)">${ICONS[x.id]}</div>
+    <div><h3>${x.name}</h3><div class="muted">${x.desc}</div><div class="price">${money(x.price)}</div></div>
+  </div>
+  <div class="stepper">
+    <button onclick="remove(${x.id})">−</button>
+    <span>${cart[x.id]||0}</span>
+    <button class="plus" onclick="add(${x.id})">+</button>
+  </div>
+ </div>`).join("")
+}
+
+function add(id){cart[id]=(cart[id]||0)+1;renderMenu();renderCart()}
+function remove(id){if(!cart[id])return;cart[id]--;if(cart[id]<=0)delete cart[id];renderMenu();renderCart()}
+
+function renderCart(){
+ let ids=Object.keys(cart);
+ if(!ids.length){
+   document.getElementById("cart").innerHTML='<div class="empty">Your cart is empty.<br>Add something from the menu.</div><button class="primary" disabled>Place Lunch Order</button>';
+   return;
+ }
+ let total=0;
+ let rows=ids.map(id=>{
+   let x=menu.find(m=>m.id==id),q=cart[id];
+   total+=x.price*q;
+   return `<div class="cartrow"><span>${x.name} × ${q}</span><span>${money(x.price*q)}</span></div>`
+ }).join("");
+ document.getElementById("cart").innerHTML=rows+`<div class="total"><span>Total</span><span>${money(total)}</span></div><button class="primary" onclick="placeOrder()">Place Lunch Order</button>`;
+}
+
+function placeOrder(){
+ if(!currentUser) return;
+ let ids=Object.keys(cart);if(!ids.length)return;
+ let items=ids.map(id=>{let x=menu.find(m=>m.id==id);return {name:x.name,qty:cart[id],price:x.price}});
+ let total=items.reduce((s,x)=>s+x.price*x.qty,0);
+ let next=orders.length?Math.max(...orders.map(o=>o.num))+1:101;
+ orders.push({
+   num:next,
+   student:currentUser.id,
+   studentName:currentUser.name || currentUser.id,
+   items,
+   total,
+   status:"NEW",
+   time:new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})
+ });
+ save();
+ cart={};
+ renderMenu();renderCart();renderStudentOrder();renderCafe();renderLiveChip();
+}
+
+function renderLiveChip(){
+ let active=orders.filter(o=>o.status!=="READY").length;
+ document.getElementById("liveChip").textContent=active?`${active} order${active===1?"":"s"} in the kitchen now`:"No orders in the kitchen yet";
+}
+
+function renderStudentOrder(){
+ if(!currentUser){
+   document.getElementById("myOrderCard").innerHTML="";
+   return;
+ }
+ let mine=orders.filter(o=>o.student===currentUser.id).slice(-1)[0],el=document.getElementById("myOrderCard");
+ if(!mine){el.innerHTML="";return}
+ let cls=mine.status==="READY"?"ready":mine.status==="PREPARING"?"preparing":"new";
+ let label=mine.status==="NEW"?"Order received":mine.status==="PREPARING"?"Preparing":"Ready for pickup";
+ let step=mine.status==="READY"?3:mine.status==="PREPARING"?2:1;
+ el.innerHTML=`<div class="ticket">
+  <div>
+    <div class="num">Order #${mine.num} · ${mine.time}</div>
+    <h3>${mine.items.map(x=>`${x.name} ×${x.qty}`).join(", ")}</h3>
+    <div class="items">${mine.status==="READY"?"Pickup Counter 1 — show this order number":"We'll notify this screen the moment it's ready"}</div>
+    <div class="stages">${[1,2,3].map(i=>`<span class="stage ${i<=step?'done':''}"></span>`).join("")}</div>
+  </div>
+  <span class="status ${cls}">${label}</span>
+ </div>`;
+}
+
+function renderCafe(){
+ document.getElementById("orderCount").textContent=orders.length+" order"+(orders.length===1?"":"s");
+ const groups={NEW:[],PREPARING:[],READY:[]};
+ orders.forEach(o=>groups[o.status]?.push(o));
+ document.getElementById("cNew").textContent=groups.NEW.length;
+ document.getElementById("cPrep").textContent=groups.PREPARING.length;
+ document.getElementById("cReady").textContent=groups.READY.length;
+ const card=o=>`<div class="order">
+  <div class="orderhead">
+    <b>#${o.num} · ${o.studentName || o.student}</b>
+    <span class="muted">${o.time}</span>
+  </div>
+  <div class="items">${o.items.map(x=>`${x.name} ×${x.qty}`).join(" · ")}</div>
+  <div class="foot">
+    <span class="price">${money(o.total)}</span>
+    ${o.status==="NEW"?`<button class="act blue" onclick="status(${o.num},'PREPARING')">Start preparing</button>`:
+      o.status==="PREPARING"?`<button class="act green" onclick="status(${o.num},'READY')">Mark ready</button>`:
+      `<span class="muted">✓ picked up</span>`}
+  </div>
+ </div>`;
+ document.getElementById("colNew").innerHTML=groups.NEW.length?groups.NEW.map(card).join(""):'<div class="empty">No new orders.</div>';
+ document.getElementById("colPrep").innerHTML=groups.PREPARING.length?groups.PREPARING.map(card).join(""):'<div class="empty">Nothing cooking.</div>';
+ document.getElementById("colReady").innerHTML=groups.READY.length?groups.READY.slice().reverse().map(card).join(""):'<div class="empty">Nothing waiting.</div>';
+}
+
+function status(num,s){
+ let o=orders.find(x=>x.num===num);
+ if(o){
+   o.status=s;
+   save();
+   renderCafe();renderStudentOrder();renderLiveChip();
+ }
+}
+
+function setView(v){
+ document.getElementById("studentView").classList.toggle("hidden",v!=="student");
+ document.getElementById("cafeView").classList.toggle("hidden",v!=="cafe");
+}
+
+function save(){
+ fetch('/api/orders',{
+   method:"POST",
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify(orders)
+ }).catch(()=>{});
+}
+
+async function pull(){
+ try{
+   const r=await fetch('/api/orders');
+   if(r.ok){
+     const serverOrders=await r.json();
+     if(JSON.stringify(serverOrders)!==JSON.stringify(orders)){
+       orders=serverOrders;
+       renderCafe();renderStudentOrder();renderLiveChip();
+     }
+   }
+ }catch(e){}
+}
+
+setInterval(pull,2000);
+
+renderMenu();
+renderCart();
+applyLoginState();
+</script>
+</body>
+</html>
